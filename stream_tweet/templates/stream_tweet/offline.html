@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block judul_halaman %}
+  Stream
+{% endblock judul_halaman %}
+
+{% block heading %}
+  <h1>Stream Tweet</h1>
+{% endblock heading %}
+
+{% block isi %}
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="judul">Judul</label>
+      <input id="judul" name="judul" class="form-control" type="text">
+    </div>
+
+    <div class="form-group">
+      <label for="desc">Deskripsi</label>
+      <textarea rows="3" id="desc" name="deskripsi" class="form-control" type="text"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="exampleFormControlSelect1">Pilih file</label>
+      <select class="form-control" name="data" id="exampleFormControlSelect1">
+        {% for data in file %}
+          <option value={{data}}>{{data}}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <br>
+    <button type="submit" class="btn btn-success">Buat</button>
+    <a class="btn btn-outline-danger" href="{% url 'home:home' 1 %}">Batal</a>
+  </form>
+{% endblock isi %}

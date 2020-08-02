@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block judul_halaman %}
+	Delete
+{% endblock %}
+
+{% block isi %}
+	<h1>Delete Confirmation</h1>
+	<p>Apakah benar anda ingin menghapus isu berikut:</p>
+	<h2>{{isu.judul}}</h2>
+	<p>{{isu.tanggal_buat}}</p>
+	<p>{{isu.deskripsi}}</p>
+	<form method='POST'>
+		{% csrf_token %}
+		<button type="submit" class="btn btn-outline-primary" name={{isu.id_ref}}>Ya</button>
+		<a class="btn btn-outline-danger" href="{% url 'home:manage' %}">Tidak</a>
+	</form>
+{% endblock %}

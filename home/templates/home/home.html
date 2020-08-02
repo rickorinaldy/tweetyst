@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block judul_halaman %}
+	Home
+{% endblock %}
+
+{% block isi %}
+<div class="row">
+
+	<div class="col-md">
+		{% if isu_list %}
+			<span class="step-links">
+				{% if page_obj.has_previous %}
+				<a href="{% url 'home:detail' 1 %}">&laquo; first</a>
+				<a href="{% url 'home:detail' page_obj.previous_page_number %}">previous</a>
+				{% endif %}
+
+				<span class="current">
+					Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+				</span>
+
+				{% if page_obj.has_next %}
+				<a href="{% url 'home:detail' page_obj.next_page_number %}">next</a>
+				<a href="{% url 'home:detail' page_obj.paginator.num_pages %}">last &raquo;</a>
+				{% endif %}
+			</span>
+			{% for isu in isu_list %}
+			<h1><a class="text-dark" href="{% url 'home:detail' isu.id_ref %}">{{isu.judul}}</a></h1><h3>{{isu.keyword}}</h3>
+			<p>{{isu.tanggal_buat}}</p>
+			<p class="border-bottom">{{isu.deskripsi|truncatechars:50}}</p>
+			{% endfor %}
+		{% else %}
+			<h3>Tidak ada yang bisa ditampilkan</h3>
+		{% endif %}
+	</div>
+</div>
+
+{% endblock %}

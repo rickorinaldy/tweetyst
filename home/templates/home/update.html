@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block judul_halaman %}
+    Update
+{% endblock %}
+
+{% block isi %}
+	<h1>Update Isu</h1>
+
+	<form method='POST'>
+		{% csrf_token %}
+    <div class="form-group">
+      <label for="judul">Judul</label>
+      <input id="judul" name="judul" value="{{isu.judul}}" class="form-control" type="text">
+    </div>
+
+    <div class="form-group">
+      <label for="desc">Deskripsi</label>
+      <textarea rows="3" id="desc" name="deskripsi" class="form-control" type="text">{{isu.deskripsi}}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="key">Keyword</label>
+      <input id="key" name="keyword" value="{{isu.keyword}}" class="form-control" type="text">
+    </div>
+
+		<button type="submit" class="btn btn-warning">Update</button>
+		<a href="{% url 'home:manage' %}" class="btn btn-danger">Tidak</a>
+	</form>
+{% endblock %}
