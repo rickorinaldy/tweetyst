@@ -79,6 +79,8 @@ def simpan_data(data, prov, id):
                 like_count    = data['like'][i],
                 waktu         = data['waktu'][i],
                 teks          = data['teks'][i],
+                latitude      = data['lokasi'][i][1],
+                longitude     = data['lokasi'][i][0],
                 lokasi        = loc)
 
         s.save()
@@ -101,6 +103,11 @@ def onlinestream(id):
     consumer_key        =                          "d2pJN0kQUgpFFMWOPKS4VBGhr"
     consumer_secret     = "BhBOHMxLhM0vqqXTse4v0FtmmMmxP67JcVUolBZi3A2kf5JaQk"
 
+    prov = {'Kepulauan Bangka Belitung'     :  'Bangka-Belitung',
+            'Papua Barat'                   : 'Irian Jaya Barat',
+            'Daerah Khusus Ibukota Jakarta' :     'Jakarta Raya',
+            'Daerah Istimewa Yogyakarta'    :       'Yogyakarta'}
+
     while len(IsuTweet.objects.filter(id_ref=id))!=0:
         myStreamListener    = MyStreamListener(batch_time=5)
 
@@ -119,10 +126,10 @@ def onlinestream(id):
 @background()
 def filestream(namafile, id):
     data = pd.read_excel(f'data\{namafile}', index_col=0)
-    # prov = {'Kepulauan Bangka Belitung'     :  'Bangka-Belitung',
-    #         'Papua Barat'                   : 'Irian Jaya Barat',
-    #         'Daerah Khusus Ibukota Jakarta' :     'Jakarta Raya',
-    #         'Daerah Istimewa Yogyakarta'    :       'Yogyakarta'}
+    prov = {'Kepulauan Bangka Belitung'     :  'Bangka-Belitung',
+            'Papua Barat'                   : 'Irian Jaya Barat',
+            'Daerah Khusus Ibukota Jakarta' :     'Jakarta Raya',
+            'Daerah Istimewa Yogyakarta'    :       'Yogyakarta'}
 
     print('Menyimpan data..')
     for i in range(len(data)):
@@ -130,8 +137,12 @@ def filestream(namafile, id):
 
         try:TweetsModel.objects.get(id_tweet=data['tweetID'][i])
         except:
-            if not data['lat'][i][0]:loc=None
-            else:loc=[data['lat'][i], data['lon'][i]]
+            try:
+                loc = geocoding(f"{data['lat'][i]}, {data['lon'][i]}")
+                if loc in prov.keys():
+                    loc=prov[loc]
+            except:
+                loc = None
 
             s = TweetsModel(
                     id_tweet      = data['tweetID'][i],
@@ -143,6 +154,8 @@ def filestream(namafile, id):
                     like_count    = data['nlikes'][i],
                     waktu         = timezone('UTC').localize(data['created_at'][i]).astimezone(timezone('Asia/Jakarta')),
                     teks          = str(data['tweet'][i]).translate(dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd)),
+                    latitude      = data['lat'][i],
+                    longitude     = data['lon'][i],
                     lokasi        = loc)
 
             try:s.save()

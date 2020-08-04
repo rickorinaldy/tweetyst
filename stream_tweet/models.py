@@ -12,6 +12,8 @@ class TweetsModel(models.Model):
     retweet_count   = models.IntegerField(blank=True, null=True)
     like_count      = models.IntegerField(blank=True, null=True)
     waktu           = models.DateTimeField(default=datetime.datetime.now)
+    latitude        = models.FloatField(null=True, blank=True, default=None)
+    longitude       = models.FloatField(null=True, blank=True, default=None)
     lokasi          = models.CharField(max_length=30, null=True)
     tags            = models.ManyToManyField('Hashtag')
 

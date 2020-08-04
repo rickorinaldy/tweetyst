@@ -4,6 +4,8 @@ from django.db.models import Count
 from django.http import HttpResponseRedirect
 import folium
 from folium.plugins import MarkerCluster
+from collections import Counter
+import pandas as pd
 
 def analyst(request, id, nama, **kwargs):
     bulan_list = ['januari', 'februari', 'maret', 'april', 'mei', 'juni',
@@ -35,13 +37,6 @@ def analyst(request, id, nama, **kwargs):
         tweet_tag = tweet_tag.filter(waktu__year=tahun)
         tweet_date = TweetsModel.objects.filter(waktu__year=tahun)
 
-    with open('data\ISO_3166-2.txt') as d:
-        dict_area = [i for i in d.read().split('\n')]
-        dict_area = {k.split(':')[0]:k.split(':')[1] for k in dict_area[:-1]}
-
-    # data_lokasi = [[t['lokasi'],t['lokasi__count']] for t in tweet_tag.exclude(lokasi=None).values('lokasi').annotate(Count('lokasi'))]
-    print(tweet_tag.exclude(lokasi=None)[0].lokasi)
-
     date_dict = tweet_tag.values('waktu').annotate(Count('waktu'))
     date_dict_all = tweet_date.values('waktu').annotate(Count('waktu'))
 
@@ -54,28 +49,41 @@ def analyst(request, id, nama, **kwargs):
     f = folium.Figure(width=1000, height=390)
     m = folium.Map(location=(-2,116.5), zoom_start=5, tiles="CartoDB positron")
     marker_cluster = MarkerCluster().add_to(m)
-    data_lokasi = tweet_tag.exclude(lokasi=None)
-    data.apply(folium.Marker([each[1]['lat'],each[1]['lon']],
-                            tooltip=f"{each[1]['lat']}, {each[1]['lon']}",
-                            icon=folium.Icon(color='blue')).add_to(marker_cluster), axis = 1)
+
+    list_lokasi = [t.lokasi for t in tweet_tag.exclude(lokasi=None)]
+    data_lokasi = dict(Counter(list_lokasi))
+    data_lokasi = pd.DataFrame({'lokasi':list(data_lokasi.keys()),'jumlah':list(data_lokasi.values())})
+
+    folium.Choropleth(
+        geo_data='data\indonesia.geojson',
+        name='choropleth',
+        data=data_lokasi,
+        columns=['lokasi', 'jumlah'],
+        key_on='properties.state',
+        fill_color='YlOrRd',
+        bins=list(map(float,range(0,max(data_lokasi.jumlah)+1,max(data_lokasi.jumlah)//5)))
+    ).add_to(m)
+    # data.apply(folium.Marker([each[1]['lat'],each[1]['lon']],
+    #                         tooltip=f"{each[1]['lat']}, {each[1]['lon']}",
+    #                         icon=folium.Icon(color='blue')).add_to(marker_cluster), axis = 1)
+
     # for each in titik.iterrows():
     #     folium.Marker([each[1]['lat'],each[1]['lon']], tooltip=f"{each[1]['lat']}, {each[1]['lon']}",icon=folium.Icon(color='blue')).add_to(marker_cluster)
 
     m.add_to(f)
 
     konteks         = {
-        'map'           : f._repr_html_(),
         'isu_id'        : id,
+        'nama_hashtag'  : nama,
+        'tweet_list'    : tweet_tag,
+        'map'           : f._repr_html_(),
+        'porsi_posisi'  : [nowhere, tweet_tag.count()-nowhere],
+        'bulan_list'    : [bulan_list[b.month-1].title() for b in TweetsModel.objects.filter(id_isu=id, tags__hashtag=nama).dates('waktu','month')],
         'bulan1_current': bulan_list[bulan1-1].title(),
         'bulan2_current': bulan_list[bulan2-1].title(),
-        'tahun_current' : tahun,
-        'line_data'     : line_data,
-        'bulan_list'    : [bulan_list[b.month-1].title() for b in TweetsModel.objects.filter(id_isu=id, tags__hashtag=nama).dates('waktu','month')],
         'tahun_list'    : [t.year for t in TweetsModel.objects.filter(id_isu=id, tags__hashtag=nama).dates('waktu','year')],
-        'nama_hashtag'  : nama,
-        # 'data_lokasi'   : data_lokasi,
-        'porsi_posisi'  : [nowhere, tweet_tag.count()-nowhere],
-        'tweet_list'    : tweet_tag
+        'tahun_current' : tahun,
+        'line_data'     : line_data
     }
 
     return render(request, 'analysis.html', konteks)
