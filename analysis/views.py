@@ -1,11 +1,19 @@
-from django.shortcuts import render
-from stream_tweet.models import TweetsModel, Hashtag
-from django.db.models import Count
-from django.http import HttpResponseRedirect
-import folium
-from folium.plugins import MarkerCluster
+import folium, pandas as pd
 from collections import Counter
-import pandas as pd
+from django.db.models import Count
+from django.shortcuts import render
+from folium.plugins import MarkerCluster
+from django.http import HttpResponseRedirect
+from stream_tweet.models import TweetsModel, Hashtag
+
+
+def marking(data):
+    folium.Marker(
+        [data.latitude,data.longitude],
+        tooltip=f"{data.latitude}, {data.longitude}",
+        icon=folium.Icon(color='blue')
+    ).add_to(marker_cluster)
+
 
 def analyst(request, id, nama, **kwargs):
     bulan_list = ['januari', 'februari', 'maret', 'april', 'mei', 'juni',
@@ -48,11 +56,15 @@ def analyst(request, id, nama, **kwargs):
 
     f = folium.Figure(width=1000, height=390)
     m = folium.Map(location=(-2,116.5), zoom_start=5, tiles="CartoDB positron")
+    global marker_cluster
     marker_cluster = MarkerCluster().add_to(m)
 
-    list_lokasi = [t.lokasi for t in tweet_tag.exclude(lokasi=None)]
+    tweet_lokasi= tweet_tag.exclude(lokasi=None)
+    list_lokasi = [t.lokasi for t in tweet_lokasi]
     data_lokasi = dict(Counter(list_lokasi))
     data_lokasi = pd.DataFrame({'lokasi':list(data_lokasi.keys()),'jumlah':list(data_lokasi.values())})
+
+    for i in map(marking, list(tweet_lokasi)):pass
 
     folium.Choropleth(
         geo_data='data\indonesia.geojson',
@@ -60,15 +72,8 @@ def analyst(request, id, nama, **kwargs):
         data=data_lokasi,
         columns=['lokasi', 'jumlah'],
         key_on='properties.state',
-        fill_color='YlOrRd',
-        bins=list(map(float,range(0,max(data_lokasi.jumlah)+1,max(data_lokasi.jumlah)//5)))
+        fill_color='YlOrRd'
     ).add_to(m)
-    # data.apply(folium.Marker([each[1]['lat'],each[1]['lon']],
-    #                         tooltip=f"{each[1]['lat']}, {each[1]['lon']}",
-    #                         icon=folium.Icon(color='blue')).add_to(marker_cluster), axis = 1)
-
-    # for each in titik.iterrows():
-    #     folium.Marker([each[1]['lat'],each[1]['lon']], tooltip=f"{each[1]['lat']}, {each[1]['lon']}",icon=folium.Icon(color='blue')).add_to(marker_cluster)
 
     m.add_to(f)
 
