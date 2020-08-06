@@ -22,7 +22,7 @@ def analyst(request, id, nama, **kwargs):
     if request.method == 'POST':
         bulan1 = bulan_list.index(request.POST['bulan1'].lower())+1
         bulan2 = bulan_list.index(request.POST['bulan2'].lower())+1
-        tahun = request.POST['tahun']
+        tahun  = request.POST['tahun']
         return HttpResponseRedirect(f'/analysis/{id}/%23{nama[1:]}/{bulan1}/{bulan2}/{tahun}')
 
     tweet_tag    = TweetsModel.objects.filter(id_isu=id, tags__hashtag=nama)
@@ -62,7 +62,7 @@ def analyst(request, id, nama, **kwargs):
     tweet_lokasi= tweet_tag.exclude(lokasi=None)
     list_lokasi = [t.lokasi for t in tweet_lokasi]
     data_lokasi = dict(Counter(list_lokasi))
-    data_lokasi = pd.DataFrame({'lokasi':list(data_lokasi.keys()),'jumlah':list(data_lokasi.values())})
+    data_lokasi = pd.DataFrame({'lokasi':list(data_lokasi.keys()),'jumlah':list(data_lokasi.values())}).sort_values(by='jumlah', ascending=False)
 
     for i in map(marking, list(tweet_lokasi)):pass
 
@@ -81,6 +81,7 @@ def analyst(request, id, nama, **kwargs):
         'isu_id'        : id,
         'nama_hashtag'  : nama,
         'tweet_list'    : tweet_tag,
+        'data_lokasi'   : {k:v for k,v in zip(data_lokasi.lokasi,data_lokasi.jumlah)},
         'map'           : f._repr_html_(),
         'porsi_posisi'  : [nowhere, tweet_tag.count()-nowhere],
         'bulan_list'    : [bulan_list[b.month-1].title() for b in TweetsModel.objects.filter(id_isu=id, tags__hashtag=nama).dates('waktu','month')],

@@ -119,7 +119,7 @@
     </div>
 
     <div class="col-6">
-      <div class="container bg-info" style="border:1px solid; height:254px;width:640px  ">
+      <div class="container bg-info" style="border:1px solid; height:254px; width:640px">
         <div id="TweetList" class="carousel slide">
           <div class="carousel-inner">
             <div class="carousel-item active" data-interval="3000">
@@ -151,6 +151,52 @@
 
   </div>
 
-  <div class="row" style="margin-left:18px; margin-top:10px">{{map|safe}}</div>
+  <div class="row" style="margin-left:3px; margin-top:10px">
+    <div class="col-9">
+      {{map|safe}}
+    </div>
+
+    <div class="col" style="margin-right:35px">
+      <table class="table table-bordered">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Keterangan Lokasi Tweet</th>
+            <th scope="col">Jumlah</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tweet dengan lokasi</td>
+            <td style="text-align:center">{{porsi_posisi.1}}</td>
+          </tr>
+          <tr>
+            <td>Tweet tanpa lokasi</td>
+            <td style="text-align:center">{{porsi_posisi.0}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="table table-bordered">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Lokasi</th>
+            <th scope="col">Jumlah</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for lok, jum in data_lokasi.items %}
+            {% if forloop.counter < 6 %}
+              <tr>
+                <th scope="row" height="25px">{{forloop.counter}}</th>
+                <td>{{lok}}</td>
+                <td style="text-align:center">{{jum}}</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 
 {% endblock %}

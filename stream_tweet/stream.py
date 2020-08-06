@@ -153,7 +153,7 @@ def filestream(namafile, id):
                     retweet_count = data['nretweets'][i],
                     like_count    = data['nlikes'][i],
                     waktu         = timezone('UTC').localize(data['created_at'][i]).astimezone(timezone('Asia/Jakarta')),
-                    teks          = str(data['tweet'][i]).translate(dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd)),
+                    teks          = re.sub(r'\n',' ',str(data['tweet'][i]).translate(dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd))),
                     latitude      = data['lat'][i],
                     longitude     = data['lon'][i],
                     lokasi        = loc)
