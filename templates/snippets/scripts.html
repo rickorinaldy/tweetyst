@@ -14,4 +14,16 @@
   $(document).ready(function(){
     $('[data-toggle="popover"]').popover();
   });
+
+  $(document).ready(function(){
+    $('#tabel1').DataTable({
+    "pagingType": "simple_numbers",
+    "lengthChange": false,
+    "searching": false,
+    "ordering": false,
+    "info": false,
+    "pageLength": 5
+    });
+  });
+
 </script>

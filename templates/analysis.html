@@ -18,7 +18,7 @@
           'containerId': 'LineChart',
           'dataTable' : {{line_data|safe}},
           'options' : {
-            'width':650,
+            'width':440,
             'height':215,
             'legend': { 'position': 'top' }
           },
@@ -103,23 +103,23 @@
   </form>
 
 
-  <div class="row" style="margin-left:1px;margin-right:30px">
+  <div class="row" style="margin-left:1px">
 
-    <div class="col-6">
+    <div class="col-4">
       <table>
         <tbody>
           <tr>
-            <td><button type="button" class="btn btn-outline-primary" onclick="AllTweet()" style="width:216px">Semua Tweet</button></td>
-            <td><button type="button" class="btn btn-outline-primary" onclick="TweetHashtag()" style="width:216px">Tweet Dengan Hashtag</button></td>
-            <td><button type="button" class="btn btn-outline-primary" onclick="TweetNoHashtag()" style="width:216px">Tweet Tanpa Hashtag</button></td>
+            <td><button type="button" class="btn btn-outline-primary" onclick="AllTweet()" style="width:110px">Semua Tweet</button></td>
+            <td><button type="button" class="btn btn-outline-primary" onclick="TweetHashtag()" style="width:170px">Tweet Dengan Hashtag</button></td>
+            <td><button type="button" class="btn btn-outline-primary" onclick="TweetNoHashtag()" style="width:160px">Tweet Tanpa Hashtag</button></td>
           </tr>
           <tr><td colspan="3"><div id="LineChart" style="border:1px solid"></div></td></tr>
         </tbody>
       </table>
     </div>
 
-    <div class="col-6">
-      <div class="container bg-info" style="border:1px solid; height:254px; width:640px">
+    <div class="col-3">
+      <div class="container bg-info" style="border:1px solid; height:254px; width:341px">
         <div id="TweetList" class="carousel slide">
           <div class="carousel-inner">
             <div class="carousel-item active" data-interval="3000">
@@ -128,11 +128,13 @@
             {% for t in tweet_list %}
             <div class="carousel-item" data-interval="10000">
               <div class="row">
-                <div class="col"><h2>@{{t.user_id}}</h2></div>
-                <div class="col offset-md-auto"><h3>{{t.waktu}}</h3></div>
+                <div class="col">
+                  <h2>@{{t.user_id}}</h2>
+                  <h3>{{t.waktu}}</h3>
+                </div>
               </div>
               <div class="row text-white">
-                <div class="col"><br><br><h5>{{t.teks}}</h5></div>
+                <div class="col"><br><h5>{{t.teks}}</h5></div>
               </div>
             </div>
             {% endfor %}
@@ -147,6 +149,10 @@
           </a>
         </div>
       </div>
+    </div>
+
+    <div class="col-5" style="margin-top:-10px">
+      <img src="data:image/png;base64,{{ wordcloud }}">
     </div>
 
   </div>
@@ -177,7 +183,7 @@
         </tbody>
       </table>
 
-      <table class="table table-bordered">
+      <table id="tabel1" class="table table-bordered table-sm">
         <thead class="thead-light">
           <tr>
             <th scope="col">#</th>
@@ -187,18 +193,16 @@
         </thead>
         <tbody>
           {% for lok, jum in data_lokasi.items %}
-            {% if forloop.counter < 6 %}
-              <tr>
-                <th scope="row" height="25px">{{forloop.counter}}</th>
-                <td>{{lok}}</td>
-                <td style="text-align:center">{{jum}}</td>
-              </tr>
-            {% endif %}
+          <tr>
+            <th scope="row" height="25px">{{forloop.counter}}</th>
+            <td>{{lok}}</td>
+            <td style="text-align:center">{{jum}}</td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-    
+
   </div>
 
 {% endblock %}

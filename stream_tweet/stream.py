@@ -144,6 +144,10 @@ def filestream(namafile, id):
             except:
                 loc = None
 
+            t = str(data['tweet'][i]).translate(dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd))
+            t = re.sub(r'\\n', ' ', t)
+            t = re.sub(r'\"', '"', t)
+
             s = TweetsModel(
                     id_tweet      = data['tweetID'][i],
                     id_isu        = id,
@@ -153,7 +157,7 @@ def filestream(namafile, id):
                     retweet_count = data['nretweets'][i],
                     like_count    = data['nlikes'][i],
                     waktu         = timezone('UTC').localize(data['created_at'][i]).astimezone(timezone('Asia/Jakarta')),
-                    teks          = re.sub(r'\n',' ',str(data['tweet'][i]).translate(dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd))),
+                    teks          = t,
                     latitude      = data['lat'][i],
                     longitude     = data['lon'][i],
                     lokasi        = loc)
