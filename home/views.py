@@ -42,12 +42,10 @@ def delete(request, id):
 
 
 def detail(request, id):
-    # stream.onlinestream(id=str(id))
     tweet_id = TweetsModel.objects.filter(id_isu=id)
-    # print(tweet_id.exclude(lokasi=None).count())
     hashtag_list = [[h['tags__hashtag'], h['tags__hashtag__count']] for h in tweet_id.values('tags__hashtag').annotate(Count('tags__hashtag')).order_by('-tags__hashtag__count') if h['tags__hashtag']!=None]
 
-    konteks = {'hashtag_list':hashtag_list,
+    konteks = { 'hashtag_list':hashtag_list,
                 'tweet_list':list(zip(
                         tweet_id.order_by('-like_count')[:5],
                         tweet_id.order_by('-retweet_count')[:5],

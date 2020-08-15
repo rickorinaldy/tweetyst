@@ -123,10 +123,15 @@
         <div id="TweetList" class="carousel slide">
           <div class="carousel-inner">
             <div class="carousel-item active" data-interval="3000">
-              <div class="row justify-content-center"><h1>{{nama_hashtag}}</h1></div>
+              <div class="row justify-content-center">
+                <h1>{{nama_hashtag}}</h1>
+              </div>
+              <div class="row justify-content-center">
+                <button type="submit" class="btn btn-secondary" onclick="window.open('{% url 'show:show' isu_id nama_hashtag bulan1 bulan2 tahun_current %}','_blank')">Lihat Data</button>
+              </div>
             </div>
             {% for t in tweet_list %}
-            <div class="carousel-item" data-interval="10000">
+            <div class="carousel-item" data-interval="6000">
               <div class="row">
                 <div class="col">
                   <h2>@{{t.user_id}}</h2>
@@ -173,29 +178,27 @@
         </thead>
         <tbody>
           <tr>
-            <td>Tweet dengan lokasi</td>
+            <td>Tweet tanpa lokasi</td>
             <td style="text-align:center">{{porsi_posisi.1}}</td>
           </tr>
           <tr>
-            <td>Tweet tanpa lokasi</td>
+            <td>Tweet dengan lokasi</td>
             <td style="text-align:center">{{porsi_posisi.0}}</td>
           </tr>
         </tbody>
       </table>
 
-      <table id="tabel1" class="table table-bordered table-sm">
+      <table id="users_analysis" class="table table-bordered table-sm">
         <thead class="thead-light">
           <tr>
-            <th scope="col">#</th>
-            <th scope="col">Lokasi</th>
-            <th scope="col">Jumlah</th>
+            <th scope="col">User</th>
+            <th scope="col">Jumlah Tweet</th>
           </tr>
         </thead>
         <tbody>
-          {% for lok, jum in data_lokasi.items %}
+          {% for usr, jum in data_lokasi.items %}
           <tr>
-            <th scope="row" height="25px">{{forloop.counter}}</th>
-            <td>{{lok}}</td>
+            <td>@{{usr}}</td>
             <td style="text-align:center">{{jum}}</td>
           </tr>
           {% endfor %}

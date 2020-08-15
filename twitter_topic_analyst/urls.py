@@ -23,5 +23,6 @@ urlpatterns = [
     path('home/', include(('home.urls', 'home'), namespace='home')),
     path('analysis/', include(('analysis.urls', 'analysis'), namespace='analysis')),
     path('stream_tweet/', include(('stream_tweet.urls', 'stream_tweet'), namespace='stream')),
+    path('show/', include(('show.urls','show'), namespace='show')),
     path('admin/', admin.site.urls)
 ]

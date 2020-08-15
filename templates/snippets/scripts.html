@@ -5,9 +5,10 @@
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
 <script type="text/javascript">
   $(document).ready(function(){
-    $('#tabel').DataTable({
+    $('#hashtag_table').DataTable({
     "pagingType": "simple",
-    "lengthChange": false
+    "lengthChange": false,
+    "ordering": false,
     });
   });
 
@@ -16,13 +17,20 @@
   });
 
   $(document).ready(function(){
-    $('#tabel1').DataTable({
-    "pagingType": "simple_numbers",
+    $('#users_analysis').DataTable({
+    "pagingType": "simple",
     "lengthChange": false,
     "searching": false,
-    "ordering": false,
+    "order": [[1,'desc']],
     "info": false,
-    "pageLength": 5
+    "pageLength": 6
+    });
+  });
+
+  $(document).ready(function(){
+    $('#show_data').DataTable({
+    "pagingType": "simple_numbers",
+    "lengthChange": false
     });
   });
 

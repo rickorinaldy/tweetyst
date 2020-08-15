@@ -57,7 +57,7 @@ def geocoding(koordinat):
         except:
             return locator.reverse(koordinat).raw['address']['city']
     except GeocoderTimedOut:
-        return do_geocode(koordinat)
+        return geocoding(koordinat)
 
 
 def simpan_data(data, prov, id):
@@ -146,7 +146,7 @@ def filestream(namafile, id):
 
             t = str(data['tweet'][i]).translate(dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd))
             t = re.sub(r'\\n', ' ', t)
-            t = re.sub(r'\"', '"', t)
+            t = re.sub(r'\\"', "'", t)
 
             s = TweetsModel(
                     id_tweet      = data['tweetID'][i],

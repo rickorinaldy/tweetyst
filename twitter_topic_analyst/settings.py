@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'home',
     'stream_tweet',
     'analysis',
-    'background_task'
+    'background_task',
+    'show'
 ]
 
 MIDDLEWARE = [
