@@ -126,8 +126,11 @@
               <div class="row justify-content-center">
                 <h1>{{nama_hashtag}}</h1>
               </div>
-              <div class="row justify-content-center">
+              <div class="row justify-content-center" style="margin-top:10px">
                 <button type="submit" class="btn btn-secondary" onclick="window.open('{% url 'show:show' isu_id nama_hashtag bulan1 bulan2 tahun_current %}','_blank')">Lihat Data</button>
+              </div>
+              <div class="row justify-content-center" style="margin-top:10px">
+                <button type="button" class="btn btn-success" onclick="window.open('{% url 'download' isu_id nama_hashtag bulan1 bulan2 tahun_current %}')">Download CSV</button>
               </div>
             </div>
             {% for t in tweet_list %}

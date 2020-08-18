@@ -14,6 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from stream_tweet import views
+from show.views import download_data
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic.base import RedirectView
@@ -24,5 +25,6 @@ urlpatterns = [
     path('analysis/', include(('analysis.urls', 'analysis'), namespace='analysis')),
     path('stream_tweet/', include(('stream_tweet.urls', 'stream_tweet'), namespace='stream')),
     path('show/', include(('show.urls','show'), namespace='show')),
+    path('download/<str:id>/<str:nama>/<int:bulan1>/<int:bulan2>/<int:tahun>', download_data, name='download'),
     path('admin/', admin.site.urls)
 ]

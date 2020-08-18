@@ -83,8 +83,7 @@ def analyst(request, id, nama, **kwargs):
                 geo_data=json_loc,
                 data=data_lokasi,
                 key_on='properties.state',
-                fill_color='YlOrRd',
-                fill_opacity=0.5
+                fill_color='YlOrRd'
             ).add_to(m)
 
     folium.features.GeoJsonTooltip(

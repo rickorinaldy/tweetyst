@@ -65,17 +65,17 @@
             {% for l,rw,rp in tweet_list %}
               <tr>
                 <td style="border-right:1px solid">
-                  <a href="#" class="text-dark" data-toggle="popover" data-content="{{l.like_count}}">
+                  <a href="#" class="text-dark" data-toggle="tooltip" data-placement="right" title="{{l.like_count}}">
                     @{{l.user_id}}
                   </a>
                 </td>
                 <td style="border-right:1px solid">
-                  <a href="#" class="text-dark" data-toggle="popover" data-content="{{rw.retweet_count}}">
+                  <a href="#" class="text-dark" data-toggle="tooltip" data-placement="right" title="{{rw.retweet_count}}">
                     @{{rw.user_id}}
                   </a>
                 </td>
                 <td>
-                  <a href="#" class="text-dark" data-toggle="popover" data-content="{{rp.reply_count}}">
+                  <a href="#" class="text-dark" data-toggle="tooltip" data-placement="right" title="{{rp.reply_count}}">
                     @{{rp.user_id}}
                   </a>
                 </td>
@@ -93,8 +93,11 @@
                 <div class="row justify-content-center">
                   <h1>Latest Tweet</h1>
                 </div>
-                <div class="row justify-content-center">
+                <div class="row justify-content-center" style="margin-top:10px">
                   <button type="submit" class="btn btn-secondary" onclick="window.open('{% url 'show:show' isu.id_ref 'all' 0 0 0 %}','_blank')">Lihat Data</button>
+                </div>
+                <div class="row justify-content-center" style="margin-top:10px">
+                  <button type="button" class="btn btn-success" onclick="window.open('{% url 'download' isu.id_ref 'all' 0 0 0 %}')">Download CSV</button>
                 </div>
               </div>
               {% for t in tweet %}

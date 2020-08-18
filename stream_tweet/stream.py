@@ -60,12 +60,10 @@ def geocoding(koordinat):
         return geocoding(koordinat)
 
 
-def simpan_data(data, prov, id):
+def simpan_data(data, id):
     for i in range(len(data['id'])):
         try:
             loc = geocoding(f"{data['lokasi'][i][1]}, {data['lokasi'][i][0]}")
-            if loc in prov.keys():
-                loc=prov[loc]
         except:
             loc = None
 
@@ -103,11 +101,6 @@ def onlinestream(id):
     consumer_key        =                          "d2pJN0kQUgpFFMWOPKS4VBGhr"
     consumer_secret     = "BhBOHMxLhM0vqqXTse4v0FtmmMmxP67JcVUolBZi3A2kf5JaQk"
 
-    prov = {'Kepulauan Bangka Belitung'     :  'Bangka-Belitung',
-            'Papua Barat'                   : 'Irian Jaya Barat',
-            'Daerah Khusus Ibukota Jakarta' :     'Jakarta Raya',
-            'Daerah Istimewa Yogyakarta'    :       'Yogyakarta'}
-
     while len(IsuTweet.objects.filter(id_ref=id))!=0:
         myStreamListener    = MyStreamListener(batch_time=5)
 
@@ -118,7 +111,7 @@ def onlinestream(id):
         myStream = tweepy.Stream(api.auth, myStreamListener)
 
         myStream.filter(track=IsuTweet.objects.get(id_ref=id).keyword.split(' OR '), languages=['in'])
-        simpan_data(myStreamListener.data, prov, id)
+        simpan_data(myStreamListener.data, id)
 
     print('Stream berhenti')
 
@@ -126,10 +119,6 @@ def onlinestream(id):
 @background()
 def filestream(namafile, id):
     data = pd.read_excel(f'data\{namafile}', index_col=0)
-    prov = {'Kepulauan Bangka Belitung'     :  'Bangka-Belitung',
-            'Papua Barat'                   : 'Irian Jaya Barat',
-            'Daerah Khusus Ibukota Jakarta' :     'Jakarta Raya',
-            'Daerah Istimewa Yogyakarta'    :       'Yogyakarta'}
 
     print('Menyimpan data..')
     for i in range(len(data)):
@@ -139,8 +128,6 @@ def filestream(namafile, id):
         except:
             try:
                 loc = geocoding(f"{data['lat'][i]}, {data['lon'][i]}")
-                if loc in prov.keys():
-                    loc=prov[loc]
             except:
                 loc = None
 
