@@ -27,7 +27,7 @@
 			{% for isu in isu_list %}
 			<h1><a class="text-dark" href="{% url 'home:detail' isu.id_ref %}">{{isu.judul}}</a></h1><h3>{{isu.keyword}}</h3>
 			<p>{{isu.tanggal_buat}}</p>
-			<p class="border-bottom">{{isu.deskripsi|truncatechars:50}}</p>
+			<p class="border-bottom">{{isu.deskripsi}}</p>
 			{% endfor %}
 		{% else %}
 			<h3>Tidak ada yang bisa ditampilkan</h3>

@@ -42,14 +42,16 @@ def delete(request, id):
 
 
 def detail(request, id):
-    tweet_id = TweetsModel.objects.filter(id_isu=id)
+    tweet_id = TweetsModel.objects.filter(id_isu=id).exclude(tags=None)
     hashtag_list = [[h['tags__hashtag'], h['tags__hashtag__count']] for h in tweet_id.values('tags__hashtag').annotate(Count('tags__hashtag')).order_by('-tags__hashtag__count') if h['tags__hashtag']!=None]
-
+    tweet_like = tweet_id.order_by('-like_count')
+    tweet_retweet = tweet_id.order_by('-retweet_count')
+    tweet_reply = tweet_id.order_by('-reply_count')
     konteks = { 'hashtag_list':hashtag_list,
                 'tweet_list':list(zip(
-                        tweet_id.order_by('-like_count')[:5],
-                        tweet_id.order_by('-retweet_count')[:5],
-                        tweet_id.order_by('-reply_count')[:5]
+                        zip(tweet_like[:5], tweet_like.values('tags__hashtag')[:5]),
+                        zip(tweet_retweet[:5], tweet_retweet.values('tags__hashtag')[:5]),
+                        zip(tweet_reply[:5], tweet_reply.values('tags__hashtag')[:5])
                         )),
                 'isu':IsuTweet.objects.get(id_ref=id),
                 'tweet':tweet_id.order_by('-waktu')}

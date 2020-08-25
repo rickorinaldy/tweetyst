@@ -1,8 +1,8 @@
 from io import BytesIO
 from collections import Counter
 from wordcloud import WordCloud
-from django.db.models import Count
 from django.shortcuts import render
+from django.db.models import Count, Max
 from django_pandas.io import read_frame
 from folium.plugins import MarkerCluster
 from django.http import HttpResponseRedirect
@@ -67,18 +67,19 @@ def analyst(request, id, nama, **kwargs):
     except: nowhere = 0
 
     data_lokasi = {t['lokasi']:t['lokasi__count'] for t in tweet_lokasi.values('lokasi').annotate(Count('lokasi'))}
-    # print(read_frame(tweet_lokasi, fieldnames=['user_id','waktu','latitude','longitude','teks']))
+
     for i in map(marking, list(tweet_lokasi)):pass
 
     with open('data\indonesia.geojson') as ig:
         json_loc = json.load(ig)
 
+    data_provinsi = {}
     for i,j in enumerate(json_loc['features']):
         if j['properties']['state'] in data_lokasi.keys():
-            json_loc['features'][i]['properties']['jumlah'] = data_lokasi[j['properties']['state']]
+            data_provinsi[j['properties']['state']] = json_loc['features'][i]['properties']['jumlah'] = data_lokasi[j['properties']['state']]
         else:
             json_loc['features'][i]['properties']['jumlah'] = 0
-
+    
     pmap = folium.Choropleth(
                 geo_data=json_loc,
                 data=data_lokasi,
@@ -116,12 +117,15 @@ def analyst(request, id, nama, **kwargs):
     graphic = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
     tmpfile.close()
 
+    user = [[t['user_id'],t['user_id__count'],list(tweet_tag.filter(user_id=t['user_id']).aggregate(Max('like_count'),Max('retweet_count'),Max('reply_count')).values())] for t in tweet_tag.values('user_id').annotate(Count('user_id'))]
+
     konteks         = {
         'isu_id'        : id,
+        'user'          : user,
         'nama_hashtag'  : nama,
         'wordcloud'     : graphic,
+        'data_lokasi'   : data_provinsi,
         'tweet_list'    : tweet_tag,
-        'data_lokasi'   : {t['user_id']:t['user_id__count'] for t in tweet_tag.values('user_id').annotate(Count('user_id'))},
         'map'           : f._repr_html_(),
         'porsi_posisi'  : [nowhere, tweet_tag.count()-nowhere],
         'bulan_list'    : [bulan_list[b.month-1].title() for b in tweet_tag_unf.dates('waktu','month')],

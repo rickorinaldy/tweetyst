@@ -12,26 +12,26 @@
     });
   });
 
-  $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-  });
-
   $(document).ready(function(){
     $('#users_analysis').DataTable({
-    "pagingType": "simple",
-    "lengthChange": false,
-    "searching": false,
-    "order": [[1,'desc']],
-    "info": false,
-    "pageLength": 6
+      "pagingType": "simple",
+      "lengthChange": false,
+      "searching": false,
+      "order": [[1,'desc']],
+      "info": false,
+      "pageLength": 6
     });
   });
 
   $(document).ready(function(){
     $('#show_data').DataTable({
-    "pagingType": "simple_numbers",
-    "lengthChange": false
+      "pagingType": "simple_numbers",
+      "lengthChange": false
     });
   });
 
+  $(document).ready(function(){
+    $("[data-toggle=tooltip]").tooltip();
+    $("[data-toggle=popover]").popover();
+  });
 </script>

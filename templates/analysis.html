@@ -184,8 +184,12 @@
             <td>Tweet tanpa lokasi</td>
             <td style="text-align:center">{{porsi_posisi.1}}</td>
           </tr>
-          <tr>
-            <td>Tweet dengan lokasi</td>
+          <tr data-toggle="tooltip" title="{{ data_lokasi|length }} provinsi berbeda" data-placement="bottom">
+            <td><span data-toggle="popover" role="button" data-html="true"
+                  data-content="
+                    {% for key, value in data_lokasi.items %}
+                      {{key}},
+                    {% endfor %}">Tweet dengan lokasi</span></td>
             <td style="text-align:center">{{porsi_posisi.0}}</td>
           </tr>
         </tbody>
@@ -195,13 +199,17 @@
         <thead class="thead-light">
           <tr>
             <th scope="col">User</th>
-            <th scope="col">Jumlah Tweet</th>
+            <th scope="col">Jumlah</th>
           </tr>
         </thead>
         <tbody>
-          {% for usr, jum in data_lokasi.items %}
+          {% for usr, jum, att in user %}
           <tr>
-            <td>@{{usr}}</td>
+            <td>
+              <span title="most like {{att.0}} | most retweeted {{att.1}} | most replied {{att.2}}">
+                @{{usr}}
+              </span>
+            </td>
             <td style="text-align:center">{{jum}}</td>
           </tr>
           {% endfor %}
@@ -210,5 +218,4 @@
     </div>
 
   </div>
-
 {% endblock %}

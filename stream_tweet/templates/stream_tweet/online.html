@@ -13,7 +13,7 @@
     {% csrf_token %}
     <div class="form-group">
       <label for="judul">Judul</label>
-      <input id="judul" name="judul" class="form-control" type="text">
+      <input id="judul" name="judul" class="form-control" type="text" required="true">
     </div>
 
     <div class="form-group">
@@ -22,8 +22,8 @@
     </div>
 
     <div class="form-group">
-      <label for="key">Keyword</label>
-      <input id="key" name="keyword" class="form-control" type="text">
+      <label for="key">Keyword (gunakan 'OR' sebagai pemisah keyword)</label>
+      <input id="key" name="keyword" class="form-control" type="text" placeholder="Contoh: televisi OR TV" required="true">
     </div>
     <br>
     <button type="submit" class="btn btn-success">Buat</button>

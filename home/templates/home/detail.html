@@ -65,18 +65,18 @@
             {% for l,rw,rp in tweet_list %}
               <tr>
                 <td style="border-right:1px solid">
-                  <a href="#" class="text-dark" data-toggle="tooltip" data-placement="right" title="{{l.like_count}}">
-                    @{{l.user_id}}
+                  <a href="{% url 'analysis:analysis' isu.id_ref l.1.tags__hashtag 0 0 0 %}" class="text-dark" data-toggle="tooltip" data-placement="right" title="{{l.1.tags__hashtag}} | {{l.0.like_count}} liked">
+                    @{{l.0.user_id}}
                   </a>
                 </td>
                 <td style="border-right:1px solid">
-                  <a href="#" class="text-dark" data-toggle="tooltip" data-placement="right" title="{{rw.retweet_count}}">
-                    @{{rw.user_id}}
+                  <a href="{% url 'analysis:analysis' isu.id_ref rw.1.tags__hashtag 0 0 0 %}" class="text-dark" data-toggle="tooltip" data-placement="right" title="{{rw.1.tags__hashtag}} | {{rw.0.retweet_count}} retweeted">
+                    @{{rw.0.user_id}}
                   </a>
                 </td>
                 <td>
-                  <a href="#" class="text-dark" data-toggle="tooltip" data-placement="right" title="{{rp.reply_count}}">
-                    @{{rp.user_id}}
+                  <a href="{% url 'analysis:analysis' isu.id_ref rp.1.tags__hashtag 0 0 0 %}" class="text-dark" data-toggle="tooltip" data-placement="right" title="{{rp.1.tags__hashtag}} | {{rp.0.reply_count}} replied">
+                    @{{rp.0.user_id}}
                   </a>
                 </td>
               </tr>

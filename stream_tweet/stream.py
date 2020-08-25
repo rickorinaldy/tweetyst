@@ -64,8 +64,10 @@ def simpan_data(data, id):
     for i in range(len(data['id'])):
         try:
             loc = geocoding(f"{data['lokasi'][i][1]}, {data['lokasi'][i][0]}")
+            lat, lon = data['lokasi'][i][1], data['lokasi'][i][0]
+
         except:
-            loc = None
+            lat = lon = loc = None
 
         s = TweetsModel(
                 id_tweet      = data['id'][i],
@@ -77,8 +79,8 @@ def simpan_data(data, id):
                 like_count    = data['like'][i],
                 waktu         = data['waktu'][i],
                 teks          = data['teks'][i],
-                latitude      = data['lokasi'][i][1],
-                longitude     = data['lokasi'][i][0],
+                latitude      = lat,
+                longitude     = lon,
                 lokasi        = loc)
 
         s.save()
