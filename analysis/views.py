@@ -79,7 +79,7 @@ def analyst(request, id, nama, **kwargs):
             data_provinsi[j['properties']['state']] = json_loc['features'][i]['properties']['jumlah'] = data_lokasi[j['properties']['state']]
         else:
             json_loc['features'][i]['properties']['jumlah'] = 0
-    
+
     pmap = folium.Choropleth(
                 geo_data=json_loc,
                 data=data_lokasi,
@@ -93,6 +93,14 @@ def analyst(request, id, nama, **kwargs):
             labels=True,
             sticky=True,
             toLocaleString=True).add_to(pmap.geojson)
+
+    folium.plugins.Search(layer=pmap,
+                     geom_type='Polygon',
+                     placeholder='Cari Provinsi',
+                     collapsed=True,
+                     search_label='state',
+                     weight=3
+                    ).add_to(m)
 
     m.add_to(f)
 
