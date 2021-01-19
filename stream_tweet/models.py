@@ -23,6 +23,7 @@ class TweetsModel(models.Model):
 
 class Hashtag(models.Model):
     hashtag         = models.CharField(max_length=100, blank=True)
+    jumlah          = models.IntegerField(null=True)
 
     def __str__(self):
         return self.hashtag

@@ -37,6 +37,7 @@
     	    <tr>
     	      <th scope="col">#</th>
     	      <th scope="col">Hashtag</th>
+            <th scope="col">Terakhir Muncul</th>
     	      <th scope="col">Jumlah</th>
     	    </tr>
     	  </thead>
@@ -44,8 +45,13 @@
     	    {% for hashtag in hashtag_list %}
       	    <tr>
       	      <th scope="row" height="25px">{{forloop.counter}}</th>
-      	      <td><a href="{% url 'analysis:analysis' isu.id_ref hashtag.0 0 0 0 %}">{{hashtag.0}}</a></td>
-      	      <td>{{hashtag.1}}</td>
+              {% if hashtag.3 == 1 %}
+                <td><a href="{% url 'analysis:analysis' isu.id_ref hashtag.0 0 0 0 %}" style="color: #8ebf42">{{hashtag.0}}</a></td>
+              {% else %}
+                <td><a href="{% url 'analysis:analysis' isu.id_ref hashtag.0 0 0 0 %}">{{hashtag.0}}</a></td>
+              {% endif %}
+      	      <td>{{hashtag.1}} x</td>
+              <td>{{hashtag.2}}</td>
       	    </tr>
     	    {% endfor %}
     	  </tbody>
@@ -65,14 +71,26 @@
             {% for l,rw,rp in tweet_list %}
               <tr>
                 <td style="border-right:1px solid">
-                  <a href="{% url 'analysis:analysis' isu.id_ref l.1.tags__hashtag 0 0 0 %}" class="text-dark" data-toggle="tooltip" data-placement="right" title="{{l.1.tags__hashtag}} | {{l.0.like_count}} liked">
-                    @{{l.0.user_id}}
-                  </a>
+                  {% if l.id_tweet in outlier %}
+                    <a href="{% url 'analysis:analysis' isu.id_ref l.1.tags__hashtag 0 0 0 %}" style="color: #8ebf42" data-toggle="tooltip" data-placement="right" title="{{l.1.tags__hashtag}} | {{l.0.like_count}} liked">
+                      @{{l.0.user_id}}
+                    </a>
+                  {% else %}
+                    <a href="{% url 'analysis:analysis' isu.id_ref l.1.tags__hashtag 0 0 0 %}" class="text-dark" data-toggle="tooltip" data-placement="right" title="{{l.1.tags__hashtag}} | {{l.0.like_count}} liked">
+                      @{{l.0.user_id}}
+                    </a>
+                  {% endif %}
                 </td>
                 <td style="border-right:1px solid">
-                  <a href="{% url 'analysis:analysis' isu.id_ref rw.1.tags__hashtag 0 0 0 %}" class="text-dark" data-toggle="tooltip" data-placement="right" title="{{rw.1.tags__hashtag}} | {{rw.0.retweet_count}} retweeted">
-                    @{{rw.0.user_id}}
-                  </a>
+                  {% if rw.id_tweet in outlier %}
+                    <a href="{% url 'analysis:analysis' isu.id_ref rw.1.tags__hashtag 0 0 0 %}" style="color: #8ebf42" data-toggle="tooltip" data-placement="right" title="{{rw.1.tags__hashtag}} | {{rw.0.retweet_count}} retweeted">
+                      @{{rw.0.user_id}}
+                    </a>
+                  {% else %}
+                    <a href="{% url 'analysis:analysis' isu.id_ref rw.1.tags__hashtag 0 0 0 %}" class="text-dark" data-toggle="tooltip" data-placement="right" title="{{rw.1.tags__hashtag}} | {{rw.0.retweet_count}} retweeted">
+                      @{{rw.0.user_id}}
+                    </a>
+                  {% endif %}
                 </td>
                 <td>
                   <a href="{% url 'analysis:analysis' isu.id_ref rp.1.tags__hashtag 0 0 0 %}" class="text-dark" data-toggle="tooltip" data-placement="right" title="{{rp.1.tags__hashtag}} | {{rp.0.reply_count}} replied">

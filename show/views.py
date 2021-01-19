@@ -1,15 +1,14 @@
-import pandas as pd
 from django.shortcuts import render
 from django.http import HttpResponse
 from django_pandas.io import read_frame
-from stream_tweet.models import TweetsModel, Hashtag
+from stream_tweet.models import TweetsModel
 
 
 def download_data(request, id, nama, bulan1, bulan2, tahun):
     bulan_list = ['januari', 'februari', 'maret', 'april', 'mei', 'juni',
-    'juli', 'agustus', 'september', 'oktober', 'november', 'desember']
+                  'juli', 'agustus', 'september', 'oktober', 'november', 'desember']
 
-    if nama!='all':
+    if nama != 'all':
         tweet_tag = TweetsModel.objects.filter(
                         id_isu=id,
                         tags__hashtag=nama,
@@ -31,8 +30,8 @@ def download_data(request, id, nama, bulan1, bulan2, tahun):
 
 
 def show_data(request, id, nama, bulan1, bulan2, tahun):
-    if nama!='all':
-        if bulan1!=0:
+    if nama != 'all':
+        if bulan1 != 0:
             tweet_tag = TweetsModel.objects.filter(
                             id_isu=id,
                             tags__hashtag=nama,
@@ -46,4 +45,4 @@ def show_data(request, id, nama, bulan1, bulan2, tahun):
         tweet_tag = TweetsModel.objects.filter(id_isu=id)
 
     hashtag_list = [', '.join([j.hashtag for j in t.tags.all()]) for t in tweet_tag]
-    return render(request, 'show.html', {'data':zip(tweet_tag,hashtag_list), 'r':[id,nama,bulan1,bulan2,tahun]})
+    return render(request, 'show.html', {'data': zip(tweet_tag, hashtag_list), 'r': [id, nama, bulan1, bulan2, tahun]})

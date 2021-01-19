@@ -6,6 +6,7 @@ from geopy.exc import GeocoderTimedOut
 from datetime import datetime, timedelta
 from .models import TweetsModel, Hashtag
 import tweepy, sys, time, re, pandas as pd
+from collections import Counter
 
 
 class MyStreamListener(tweepy.StreamListener):
@@ -61,6 +62,7 @@ def geocoding(koordinat):
 
 
 def simpan_data(data, id):
+    hashtags = []
     for i in range(len(data['id'])):
         try:
             loc = geocoding(f"{data['lokasi'][i][1]}, {data['lokasi'][i][0]}")
@@ -85,6 +87,7 @@ def simpan_data(data, id):
 
         s.save()
         hashtag_list = re.findall(r"(#[\w\d]+)", s.teks)
+        hashtags += hashtag_list
         if len(hashtag_list)>0:
             for tag in hashtag_list:
                 try:
@@ -92,6 +95,15 @@ def simpan_data(data, id):
                 except:
                     h = Hashtag.objects.create(hashtag=tag)
                 s.tags.add(h)
+
+    akumulasi = Counter(hashtags)
+    if len(akumulasi.values())>0:
+        Hashtag.objects.all().update(jumlah=0)
+        for tag in akumulasi.keys():
+            h = Hashtag.objects.get(hashtag=tag)
+            h.jumlah = akumulasi[tag]
+            h.save()
+
 
 
 @background()
@@ -121,17 +133,20 @@ def onlinestream(id):
 @background()
 def filestream(namafile, id):
     data = pd.read_excel(f'data\{namafile}', index_col=0)
+    mulai = time.time()
+    hashtags = []
 
     print('Menyimpan data..')
     for i in range(len(data)):
         if len(IsuTweet.objects.filter(id_ref=id))==0:break
 
-        try:TweetsModel.objects.get(id_tweet=data['tweetID'][i])
+        try:
+            TweetsModel.objects.get(id_tweet=data['tweetID'][i])
+            mulai = time.time()
+
         except:
-            try:
-                loc = geocoding(f"{data['lat'][i]}, {data['lon'][i]}")
-            except:
-                loc = None
+            try: loc = geocoding(f"{data['lat'][i]}, {data['lon'][i]}")
+            except: loc = None
 
             t = str(data['tweet'][i]).translate(dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd))
             t = re.sub(r'\\n', ' ', t)
@@ -151,17 +166,28 @@ def filestream(namafile, id):
                     longitude     = data['lon'][i],
                     lokasi        = loc)
 
-            try:s.save()
+            try:
+                s.save()
+                hashtag_list = re.findall(r"(#[\w\d]+)", s.teks)
+                hashtags += hashtag_list
+                if len(hashtag_list)>0:
+                    for tag in hashtag_list:
+                        try: h = Hashtag.objects.get(hashtag=tag)
+                        except: h = Hashtag.objects.create(hashtag=tag)
+                        s.tags.add(h)
+
+                if (time.time()-mulai)>60:
+                    akumulasi = Counter(hashtags)
+                    if len(akumulasi.values())>0:
+                        Hashtag.objects.all().update(jumlah=0)
+                        for tag in akumulasi.keys():
+                            h = Hashtag.objects.get(hashtag=tag)
+                            h.jumlah = akumulasi[tag]
+                            h.save()
+                        hashtags = []
+
+                    mulai = time.time()
+
             except:continue
-
-            hashtag_list = re.findall(r"(#[\w\d]+)", s.teks)
-            if len(hashtag_list)>0:
-                for tag in hashtag_list:
-                    try:
-                        h = Hashtag.objects.get(hashtag=tag)
-                    except:
-                        h = Hashtag.objects.create(hashtag=tag)
-
-                    s.tags.add(h)
 
     print('Berhasil disimpan')

@@ -7,8 +7,12 @@ from django_pandas.io import read_frame
 from folium.plugins import MarkerCluster
 from django.http import HttpResponseRedirect
 from stream_tweet.models import TweetsModel, Hashtag
-import folium, matplotlib.pyplot as plt, base64, json
+import folium, matplotlib.pyplot as plt, base64, json, numpy as np
 
+def std_outlier(data, out_sign, no_out_sign, threshold=2):
+    mean = np.mean(data)
+    std = np.std(data)
+    return [out_sign if (i>(mean+threshold*std) or i<(mean-threshold*std)) else no_out_sign for i in data]
 
 def marking(data):
     folium.Marker(
@@ -47,14 +51,20 @@ def analyst(request, id, nama, **kwargs):
         bulan1, bulan2 = min(b).month, max(b).month
         tahun = max(tweet_tag.dates('waktu', 'year')).year
         tweet_tag  = tweet_tag.filter(waktu__year=tahun)
-        tweet_date = TweetsModel.objects.filter(waktu__year=tahun)
+        tweet_date = TweetsModel.objects.filter(waktu__year=tahun,waktu__month__gte=bulan1,waktu__month__lte=bulan2)
 
     date_dict     = tweet_tag.values('waktu').annotate(Count('waktu'))
     date_dict_all = tweet_date.values('waktu').annotate(Count('waktu'))
 
-    line_data = [[f"{d['waktu'].strftime('%d/%m')}", d['waktu__count'], da['waktu__count']] for d,da in zip(date_dict, date_dict_all)]
-    line_data.insert(0,['tanggal', 'tweet dengan hashtag', 'semua tweet'])
+    out_sign = 'point { size: 7; shape-type: star; fill-color: #a52714; dataOpacity: 0.3; visible: true }'
+    no_out_sign = 'point'
 
+    line_data = [[f"{d['waktu'].strftime('%d/%m')}", d['waktu__count'], da['waktu__count']] for d,da in zip(date_dict, date_dict_all)]
+    zipHashList = list(zip(*line_data))
+    out1,out2 = std_outlier(zipHashList[1], out_sign, no_out_sign), std_outlier(zipHashList[2], out_sign, no_out_sign)
+    line_data = list(zip(zipHashList[0], zipHashList[1], zipHashList[2], out1, out2))
+    line_data = [list(i) for i in line_data]
+    line_data.insert(0,['tanggal', 'tweet dengan hashtag', 'semua tweet', {'type': 'string', 'role': 'style'}, {'type': 'string', 'role': 'style'}])
 
     f = folium.Figure(width=1000, height=390)
     m = folium.Map(location=(-2,116.5), zoom_start=5, tiles="CartoDB positron")
