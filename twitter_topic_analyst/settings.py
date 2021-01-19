@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'w7^5nut+2fuwjyu%dk*dt2#m!00tlr$%999xz(h(hx*)41wev@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['tweetyst.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
